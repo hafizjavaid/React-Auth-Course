@@ -1,36 +1,39 @@
-import React, { Component } from 'react';
+import React, {  useEffect } from 'react';
 import { Route, Switch, withRouter, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 
+// import Checkout
 import Layout from './hoc/Layout/Layout';
 import BurgerBuilder from './containers/BurgerBuilder/BurgerBuilder';
-import Checkout from './containers/Checkout/Checkout';
-import Orders from './containers/Orders/Orders';
-import Auth from './containers/Auth/Auth';
 import Logout from './containers/Auth/Logout/Logout';
 import * as actions from './store/actions/index';
-
-class App extends Component {
-  componentDidMount () {
-    this.props.onTryAutoSignup();
-  }
-
-  render () {
+import Checkout from './containers/Checkout/Checkout';
+// import Auth
+import Auth from './containers/Auth/Auth';
+import Orders from './containers/Orders/Orders'
+const app = props => {
+ 
+  const { onTryAutoSignup } = props;
+  useEffect(()=>{
+    props.onTryAutoSignup();
+  },[onTryAutoSignup])
+ 
+  
     let routes = (
       <Switch>
-        <Route path="/auth" component={Auth} />
+        <Route path="/auth" component={ Auth } />
         <Route path="/" exact component={BurgerBuilder} />
         <Redirect to="/" />
       </Switch>
     );
 
-    if ( this.props.isAuthenticated ) {
+    if ( props.isAuthenticated ) {
       routes = (
         <Switch>
-          <Route path="/checkout" component={Checkout} />
-          <Route path="/orders" component={Orders} />
+          <Route path="/checkout" component={ Checkout } />
+          <Route path="/orders" component={ Orders } />
           <Route path="/logout" component={Logout} />
-          <Route path="/auth" component={Auth} />
+          <Route path="/auth" component={ Auth } />
           <Route path="/" exact component={BurgerBuilder} />
           <Redirect to="/" />
         </Switch>
@@ -40,11 +43,13 @@ class App extends Component {
     return (
       <div>
         <Layout>
+          {/* <Suspense fallback={<p>Loading....</p>}> */}
+
           {routes}
+          {/* </Suspense> */}
         </Layout>
       </div>
     );
-  }
 }
 
 const mapStateToProps = state => {
@@ -59,4 +64,4 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default withRouter( connect( mapStateToProps, mapDispatchToProps )( App ) );
+export default withRouter( connect( mapStateToProps, mapDispatchToProps )( app ) );
